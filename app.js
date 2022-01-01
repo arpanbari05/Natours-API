@@ -5,6 +5,7 @@ const rateLimiter = require("express-rate-limit");
 const sanitizer = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const cors = require("cors");
 
 const tourRouter = require("./Routes/tour-routes");
 const userRouter = require("./Routes/user-routes");
@@ -18,6 +19,18 @@ process.on("uncaughtException", () => {
 });
 
 const app = express();
+
+app.enable("trust proxy");
+
+// Adds the Access Control header automatically to surpass cors
+app.use(cors());
+
+// Allows only specified urls
+// app.use(cors({
+//   origin: "www.natours.com"
+// }))
+
+app.options("*", cors());
 
 // Parsing json into req.body
 app.use(express.json()); // middleware

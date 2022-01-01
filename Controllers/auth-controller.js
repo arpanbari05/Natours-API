@@ -13,12 +13,13 @@ const signToken = (id) => {
   });
 };
 
-const sendTokenCookie = (res, token) => {
+const sendTokenCookie = (req, res, token) => {
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    secure: req.secure || req.headers["x-forwarded-proto"] === "https"
   };
 
   if (process.env.NODE_ENV == "production") cookieOptions.secure = true;
@@ -38,7 +39,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   const token = signToken(user._id);
 
-  sendTokenCookie(res, token);
+  sendTokenCookie(req, res, token);
 
   res.status(201).json({
     status: "success",
@@ -68,7 +69,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // 4) Generate token
   const token = signToken(user._id);
 
-  sendTokenCookie(res, token);
+  sendTokenCookie(req, res, token);
 
   // 5) Send the response
   res.status(200).json({
@@ -183,7 +184,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // Log the user in
   const token = signToken(user._id);
 
-  sendTokenCookie(res, token);
+  sendTokenCookie(req, res, token);
 
   res.status(201).json({
     status: "success",
@@ -212,7 +213,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // Log the user in
   const token = signToken();
 
-  sendTokenCookie(res, token);
+  sendTokenCookie(req, res, token);
 
   res.status(200).json({
     status: "success",
