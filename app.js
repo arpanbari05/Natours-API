@@ -74,7 +74,7 @@ mongoose
   })
   .then(() => console.log("Database connect successfully"));
 
-const port = process.env.NODE_ENV || 3000;
+const port = process.env.PORT || 3000;
 
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
